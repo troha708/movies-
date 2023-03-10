@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h1>Search For A Movie!</h1>
+
+
+  <p>
+    Title <input autocomplete = "off" autofocus name = "movie" type = "text" placeholder = "All Titles">
+
+<script>
+
+    let input = document.querySelector('input');
+    input.addEventListener('input', async function () {
+      let response = await fetch('/search?q=' + input.value);
+      let movies = await response.json();
+      let html = '';
+
+      for (let movie of movies) {
+        let title = movie.title.replace('<', '&lt;').replace('&', '&amp;');
+        html += '<tr><td>' + title + '</td><td>' + movie.year + '</td></tr>';
+      }
+      document.querySelector('tbody').innerHTML = html;
+    });
+
+</script>
+
+ </p>
+
+
+    <label>Select Year: From:</label>
+    <select name="startYear">
+
+      {% for year in range(1970, 2023) %}
+          <option value="{{ year }}">{{ year }}</option>
+      {% endfor %}
+
+    </select>
+
+    <label>To:</label>
+    <select name="endYear">
+      {% for year in range(2023, 1969, -1) %}
+      <option value="{{ year }}">{{ year }}</option>
+      {% endfor %}
+    </select>
+
+    <p>
+      <label for="director">Director</label>
+      <input type="text" id="director" list="directors" placeholder = "All Directors">
+      <datalist id="directors">
+        <option value="Any" selected>
+        <option value="Option 1">
+        <option value="Option 2">
+        <option value="Option 3">
+        <option value="Option 4">
+        <option value="Option 5">
+      </datalist>
+    </p>
+
+<label for="my-range">Minimum Rating:</label>
+<input type="range" id="my-range" name="my-range" min="0" max="10" step="0.1" value = "0" style = "width: 300px;">
+<span id="range-value"></span>
+
+<script>
+  var range = document.getElementById("my-range");
+  var rangeValue = document.getElementById("range-value");
+
+  rangeValue.innerHTML = range.value;
+
+  range.oninput = function() {
+    rangeValue.innerHTML = this.value;
+  }
+</script>
+
+
+
+<table>
+  <thead>
+      <tr>
+          <th>Title</th>
+          <th>Year</th>
+
+      </tr>
+  </thead>
+  <tbody>
+      {% for movie in movies %}
+          <tr>
+              <td>{{ movie["title"] }}</td>
+              <td>{{ movies.year }}</td>
+          </tr>
+      {% endfor %}
+  </tbody>
+</table>
+
+<!--
+<ul>
+  {% for movie in movies %}
+    <li>{{ movie["title"] }}</li>
+  {% endfor %}
+</ul>
+-->
+{% endblock %}
+
